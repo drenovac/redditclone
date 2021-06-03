@@ -1,5 +1,7 @@
 class LinksController < ApplicationController
   before_action :set_link, only: %i[ show edit update destroy ]
+  # before_filter :authenticate_user!, except: [:index, :show]
+  before_action :authenticate_user!, except: [:index, :show]
 
   # GET /links or /links.json
   def index
@@ -12,7 +14,7 @@ class LinksController < ApplicationController
 
   # GET /links/new
   def new
-    @link = Link.new
+    @link = current_user.links.build
   end
 
   # GET /links/1/edit
@@ -20,15 +22,27 @@ class LinksController < ApplicationController
   end
 
   # POST /links or /links.json
-  def create
-    @link = Link.new(link_params)
+  # def create
+  #   @link = Link.new(link_params)
 
-    respond_to do |format|
+  #   respond_to do |format|
+  #     if @link.save
+  #       format.html { redirect_to @link, notice: "Link was successfully created." }
+  #       format.json { render :show, status: :created, location: @link }
+  #     else
+  #       format.html { render :new, status: :unprocessable_entity }
+  #       format.json { render json: @link.errors, status: :unprocessable_entity }
+  #     end
+  #   end
+  # end
+  def create
+    @link = current_user.links.build(link_params)
+respond_to do |format|
       if @link.save
-        format.html { redirect_to @link, notice: "Link was successfully created." }
+        format.html { redirect_to @link, notice: 'Link was successfully created.' }
         format.json { render :show, status: :created, location: @link }
       else
-        format.html { render :new, status: :unprocessable_entity }
+        format.html { render :new }
         format.json { render json: @link.errors, status: :unprocessable_entity }
       end
     end
